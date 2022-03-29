@@ -4,7 +4,8 @@
       <h1 class="font-blue">Welcome to Experience sharing portal</h1>
       <p class="font-blue">
         Our average rating is {{ averageRating }}
-        <b-icon class="starIcon" icon="star-fill"></b-icon> out of 5<b-icon
+        <b-icon class="starIcon" icon="star-fill"></b-icon> out of 5
+        <b-icon
           class="starIcon"
           icon="star-fill"
         ></b-icon>
@@ -94,6 +95,26 @@
         </a>
       </div>
     </div>
+    <div class="reportDiv container">
+      <h3 class="font-blue">Report an issue</h3>
+      <br>
+      <form class="was-validated" action="http://localhost:5000/issueData" method="post" encType="application/x-www-form-urlencoded">
+        <div class="form-group">
+            <label for="email"><span class="redFont">*</span> Email:</label>
+            <input type="email" pattern="[a-zA-Z0-9]{1,}[a-zA-Z0-9.-_]{1,}@[a-zA-Z]{2,}[.]{1}[a-zA-Z]{2,}[.]{0,1}[a-zA-Z]{0,}" title="Please enter valid email id." name="email" class="form-control" id="email" placeholder="Enter your email id here..." required>
+        </div>
+        <div class="form-group">
+            <label for="content"><span class="redFont">*</span> Issue:</label>
+            <textarea type="text" name="issue" id="issue" class="form-control" rows="5" placeholder="Write your issue here..." required></textarea>
+        </div>
+        <br>
+        <div class="text-center">
+            <div class="reportBtn text-center">
+              <button type="submit" class="btn btn-success btn-block">Submit</button>
+            </div>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -133,9 +154,6 @@ export default {
 .blueBackground {
   background-color: #003865;
 }
-.font-blue {
-  color: #003865;
-}
 .starIcon {
   color: #ffa500;
 }
@@ -152,5 +170,12 @@ export default {
 }
 .fontRight {
   text-align: right;
+}
+.reportDiv{
+  margin-top: 50px;
+}
+.reportBtn{
+  max-width: 600px;
+  margin: auto;
 }
 </style>

@@ -23,6 +23,7 @@ export default {
     'custom-footer': CustomFooter,
   },
   created(){
+    this.$store.dispatch('adminLoginModule/isAlreadyLogin');
     this.$store.dispatch('homeModule/fetchAvgRating');
     this.$store.dispatch('homeModule/fetchSliderExperiences');
   },
@@ -34,5 +35,11 @@ export default {
   background-color: #f9f9f9;
   padding-top: 100px;
   padding-bottom: 50px;
+}
+.container{
+  border-radius: 10px !important;
+}
+.font-blue {
+  color: #003865;
 }
 </style>

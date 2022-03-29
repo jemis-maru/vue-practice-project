@@ -41,19 +41,39 @@
                 <a class="nav-link">Find review <span class="sr-only">(current)</span></a>
               </li>
             </router-link>
-            <router-link to="/demo" class="routerLink">
+            <router-link to="/admin" class="routerLink">
               <li class="nav-item active">
                 <a class="nav-link">Admin <span class="sr-only">(current)</span></a>
               </li>
             </router-link>
-              <li class="nav-item active">
-                <a class="nav-link">Logout <span class="sr-only">(current)</span></a>
-              </li>
+            <li class="mouseCursor nav-item active">
+              <a v-if="isLogin" @click="logoutFun" class="nav-link">Logout <span class="sr-only">(current)</span></a>
+            </li>
           </ul>
         </div>
     </nav>
 </div>
 </template>
+
+<script>
+export default {
+  // data(){
+  //   return{
+  //     isLogin: true,
+  //   };
+  // },
+  methods:{
+    logoutFun(){
+      this.$store.dispatch('adminLoginModule/logoutClicked');
+    },
+  },
+  computed:{
+    isLogin(){
+      return this.$store.getters['adminLoginModule/isLogin'];
+    },
+  },
+}
+</script>
 
 <style scoped>
 
@@ -97,6 +117,9 @@
 .routerLink{
   text-decoration: none;
   color: #ffffff;
+}
+.mouseCursor{
+  cursor: pointer;
 }
 
 </style>
