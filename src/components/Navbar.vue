@@ -31,7 +31,7 @@
                 <a class="nav-link">Read reviews <span class="sr-only">(current)</span></a>
               </li>
             </router-link>
-            <router-link to="/demo" class="routerLink">
+            <router-link to="/addReview" class="routerLink">
               <li class="nav-item active">
                 <a class="nav-link">Add review <span class="sr-only">(current)</span></a>
               </li>

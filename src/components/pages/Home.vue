@@ -154,12 +154,6 @@ export default {
 .blueBackground {
   background-color: #003865;
 }
-.starIcon {
-  color: #ffa500;
-}
-.redFont {
-  color: #ff0000;
-}
 .highlightContainer {
   margin-top: 50px;
 }

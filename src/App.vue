@@ -42,4 +42,10 @@ export default {
 .font-blue {
   color: #003865;
 }
+.redFont {
+  color: #ff0000;
+}
+.starIcon {
+  color: #ffa500;
+}
 </style>
