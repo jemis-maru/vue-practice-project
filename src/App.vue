@@ -26,6 +26,7 @@ export default {
     this.$store.dispatch('adminLoginModule/isAlreadyLogin');
     this.$store.dispatch('homeModule/fetchAvgRating');
     this.$store.dispatch('homeModule/fetchSliderExperiences');
+    this.$store.dispatch('adminHomeModule/fetchReviewToApprove');
   },
 }
 </script>
