@@ -3,7 +3,7 @@ export default {
     state(){
         return{
             noReviewsToApprove: true,
-            reviewsToApprove: null,
+            reviewsToApprove: [],
         };
     },
     mutations: {
@@ -94,6 +94,7 @@ export default {
     },
     getters: {
         reviewsToApprove(state){
+          console.log(state.reviewsToApprove);
             return state.reviewsToApprove;
         },
         noReviewsToApprove(state){

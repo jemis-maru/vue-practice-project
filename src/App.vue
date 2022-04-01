@@ -23,10 +23,10 @@ export default {
     'custom-footer': CustomFooter,
   },
   created(){
+    this.$store.dispatch('adminHomeModule/fetchReviewToApprove');
     this.$store.dispatch('adminLoginModule/isAlreadyLogin');
     this.$store.dispatch('homeModule/fetchAvgRating');
     this.$store.dispatch('homeModule/fetchSliderExperiences');
-    this.$store.dispatch('adminHomeModule/fetchReviewToApprove');
   },
 }
 </script>
