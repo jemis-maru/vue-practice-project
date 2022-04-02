@@ -9,6 +9,14 @@
     </div>
     <div v-else>
       <div class="container filterContainer">
+          <div class="row searchDiv">
+              <div class="col-3"></div>
+              <div class="col-3"></div>
+              <div class="col-6 form-row font-blue">
+                  <label class="col-sm-6 searchLabel col-form-label" for="search">Search: &nbsp;</label>
+                  <input id="search" class="form-control col-sm-6" type="text" placeholder="Search" @keyup="filterReview" v-model="searchText" />
+              </div>
+          </div>
           <div class="row selectionFilters">
                 <div class="col-md-4 col-12">
                     <p class="font-blue">Sort:</p>
@@ -28,17 +36,30 @@
                     </select>
                 </div>
                 <div class="col-md-4 col-12">
-                    
+                    <p style="color: #003865;">Review filter:</p>
+                    <select class="form-control" v-model="goodOrBad" @change="filterGoodOrBad">
+                        <option value="">All review</option>
+                        <option value="good">Good review</option>
+                        <option value="bad">Bad review</option>
+                    </select>
                 </div>
           </div>
-        <div class="row">
-            <div class="col-3"></div>
-            <div class="col-3"></div>
-            <div class="col-6 form-row font-blue">
-                <label class="col-sm-3 col-form-label" for="search">Search: </label>
-                <input id="search" class="form-control col-sm-7" type="text" placeholder="Search" @keyup="filterReview" v-model="searchText" />
-            </div>
-        </div>
+          <div class="row dateFilterDiv">
+              <div class="dateFilterDivText col-md-4 col-12">
+                  <label for="firstDate">From: &nbsp;</label>
+                  <input type="date" id="firstDate2" name="firstDate" v-model="firstDate" @change="filterDateFun('firstDate')">
+              </div>
+              <div class="dateFilterDivText col-md-4 col-12">
+                  <label for="secondDate">To: &nbsp;</label>
+                  <input type="date" id="secondDate2" name="secondDate" v-model="secondDate" @change="filterDateFun('secondDate')">
+              </div>
+              <div class="dateFilterDivText col-md-4 col-12">
+                  <a class="btn clearDateBtn">Clear date</a>
+              </div>
+          </div>
+      </div>
+      <div v-if="dataAfterFilter" class="font-blue noReviewForFilter">
+          <h4>Sorry! No review found for this filter</h4>
       </div>
       <div
         class="container-fluid cardContainer"
@@ -110,6 +131,9 @@ export default {
       searchText: '',
       sortReview: '',
       filterPerson: '',
+      goodOrBad: '',
+      firstDate: '',
+      secondDate: '',
       reviewsForApproval: [],
     };
   },
@@ -121,6 +145,36 @@ export default {
       rejectReview(reviewId){
         console.log(reviewId);
         this.$store.dispatch("adminHomeModule/rejectReview", reviewId);
+      },
+      filterGoodOrBad(para){
+        this.searchText = "";
+        if(para != "callingFromDateFilter"){
+          this.firstDate = "";
+          this.secondDate = "";
+        }
+        this.filterPersonForSearch();
+        // console.log(this.goodOrBad);
+        let goodOrBadArr = [];
+        if(this.goodOrBad == "good"){
+          goodOrBadArr = [];
+          this.reviewsForApproval.forEach(review => {
+            if(review.rating >= 3){
+              goodOrBadArr.push(review);
+            }
+          });
+        }
+        else if(this.goodOrBad == "bad"){
+          goodOrBadArr = [];
+          this.reviewsForApproval.forEach(review => {
+            if(review.rating < 3){
+              goodOrBadArr.push(review);
+            }
+          });
+        }
+        else{
+          goodOrBadArr = this.reviewsToApprove;
+        }
+        this.reviewsToApprove = goodOrBadArr;
       },
       filterReview(){
         this.filterPersonForSearch();
@@ -185,7 +239,66 @@ export default {
       },
       filterPersonFun(){
         this.searchText = "";
+        this.sortReview = "";
+        this.goodOrBad = "";
+        this.firstDate = "";
+        this.secondDate = "";
         this.filterPersonForSearch();
+      },
+      filterDateFun(para){
+        this.filterPersonForSearch();
+        this.filterGoodOrBad("callingFromDateFilter");
+        // console.log(this.firstDate);
+        // console.log(this.secondDate);
+        // console.log(para);
+        let filterDataUsingDate = [];
+        let selectedDate = "";
+        let dateForFilter = "";
+        if(para == "firstDate"){
+          selectedDate = this.secondDate;
+          dateForFilter = this.firstDate;
+        }
+        else{
+          selectedDate = this.firstDate;
+          dateForFilter = this.secondDate;
+        }
+        if(selectedDate != ""){
+            if(this.secondDate < this.firstDate){
+                alert("Invalid input!");
+                this.firstDate = '';
+                this.secondDate = '';
+            }
+            else{
+                this.reviewsForApproval.forEach(item => {
+                    let givenFirstDate = new Date(""+this.firstDate.split("/")[1] +","+ this.firstDate.split("/")[2] +","+ this.firstDate.split("/")[0]);
+                    let givenSecondDate = new Date(""+this.secondDate.split("/")[1] +","+ this.secondDate.split("/")[2] +","+ this.secondDate.split("/")[0]);
+                    let tempDate = new Date(""+item.addedDate.split("/")[1] +","+ item.addedDate.split("/")[0] +","+ item.addedDate.split("/")[2]);
+                    if(tempDate >= givenFirstDate && tempDate <= givenSecondDate){
+                        filterDataUsingDate.push(item);
+                    }
+                });
+                console.log(filterDataUsingDate);
+                this.reviewsToApprove = filterDataUsingDate;
+            }
+        }
+        else{
+            this.reviewsForApproval.forEach(item => {
+                let dateFormate = new Date(""+dateForFilter.split("/")[1] +","+ dateForFilter.split("/")[2] +","+ dateForFilter.split("/")[0]);
+                let tempDate = new Date(""+item.addedDate.split("/")[1] +","+ item.addedDate.split("/")[0] +","+ item.addedDate.split("/")[2]);
+                if(para == "firstDate"){
+                  if(tempDate >= dateFormate){
+                      filterDataUsingDate.push(item);
+                  }
+                }
+                else{
+                  if(tempDate <= dateFormate){
+                      filterDataUsingDate.push(item);
+                  }
+                }
+            });
+            console.log(filterDataUsingDate);
+            this.reviewsToApprove = filterDataUsingDate;
+        }
       },
   },
   computed: {
@@ -203,6 +316,14 @@ export default {
         this.reviewsForApproval = passingReviews;
       }
     },
+    dataAfterFilter(){
+      if(this.reviewsForApproval.length > 0){
+        return false;
+      }
+      else{
+        return true;
+      }
+    },
   },
   async created(){
     await this.$store.dispatch('adminHomeModule/fetchReviewToApprove');
@@ -212,14 +333,28 @@ export default {
 </script>
 
 <style scoped>
-.notFoundDiv {
+.notFoundDiv, .noReviewForFilter, .dateFilterDivText {
   text-align: center;
+}
+.noReviewForFilter{
+  margin-top: 30px;
 }
 .filterContainer{
   margin-bottom: 20px;
 }
+.searchDiv{
+  margin-bottom: 30px;
+}
+.searchLabel{
+  padding-right: 5px;
+  text-align: right;
+}
 .selectionFilters{
   margin-bottom: 20px;
+}
+.clearDateBtn{
+  background-color: #003865;
+  color: #ffffff;
 }
 .cardContainer{
   max-width: 1000px
