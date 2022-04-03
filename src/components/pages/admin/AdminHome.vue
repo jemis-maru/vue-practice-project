@@ -54,8 +54,11 @@
                   <input type="date" id="secondDate2" name="secondDate" v-model="secondDate" @change="filterDateFun('secondDate')">
               </div>
               <div class="dateFilterDivText col-md-4 col-12">
-                  <a class="btn clearDateBtn">Clear date</a>
+                  <button class="btn clearDateBtn" @click="clearDateFilter">Clear date</button>
               </div>
+          </div>
+          <div class="clearAllFilterDiv">
+              <p>Clear all filters:&nbsp;&nbsp;<a class="btn clearDateBtn" @click="clearAllFilters">Clear</a></p>
           </div>
       </div>
       <div v-if="dataAfterFilter" class="font-blue noReviewForFilter">
@@ -147,13 +150,12 @@ export default {
         this.$store.dispatch("adminHomeModule/rejectReview", reviewId);
       },
       filterGoodOrBad(para){
-        this.searchText = "";
-        if(para != "callingFromDateFilter"){
+        if(para != "callingFromOtherFilter"){
+          this.searchText = "";
           this.firstDate = "";
           this.secondDate = "";
         }
         this.filterPersonForSearch();
-        // console.log(this.goodOrBad);
         let goodOrBadArr = [];
         if(this.goodOrBad == "good"){
           goodOrBadArr = [];
@@ -177,7 +179,15 @@ export default {
         this.reviewsToApprove = goodOrBadArr;
       },
       filterReview(){
-        this.filterPersonForSearch();
+        if(this.goodOrBad != ''){
+          this.filterGoodOrBad("callingFromOtherFilter");
+        }
+        if(this.firstDate != '' || this.secondDate != ''){
+          this.filterDateFun("callingFromSearch");
+        }
+        else if((this.firstDate == '' && this.secondDate == '') && this.goodOrBad == ''){
+          this.filterPersonForSearch();
+        }
         this.reviewsToApprove = this.reviewsForApproval;
         let filterArray = [];
         if(this.searchText === ''){
@@ -246,59 +256,73 @@ export default {
         this.filterPersonForSearch();
       },
       filterDateFun(para){
-        this.filterPersonForSearch();
-        this.filterGoodOrBad("callingFromDateFilter");
-        // console.log(this.firstDate);
-        // console.log(this.secondDate);
-        // console.log(para);
+        if(para != "callingFromSearch"){
+          this.searchText = "";
+        }
+        this.filterGoodOrBad("callingFromOtherFilter");
         let filterDataUsingDate = [];
-        let selectedDate = "";
         let dateForFilter = "";
-        if(para == "firstDate"){
-          selectedDate = this.secondDate;
+        if(this.firstDate != '' && this.secondDate == ''){
           dateForFilter = this.firstDate;
         }
-        else{
-          selectedDate = this.firstDate;
+        else if(this.firstDate == '' && this.secondDate != ''){
           dateForFilter = this.secondDate;
         }
-        if(selectedDate != ""){
-            if(this.secondDate < this.firstDate){
-                alert("Invalid input!");
-                this.firstDate = '';
-                this.secondDate = '';
-            }
-            else{
-                this.reviewsForApproval.forEach(item => {
-                    let givenFirstDate = new Date(""+this.firstDate.split("/")[1] +","+ this.firstDate.split("/")[2] +","+ this.firstDate.split("/")[0]);
-                    let givenSecondDate = new Date(""+this.secondDate.split("/")[1] +","+ this.secondDate.split("/")[2] +","+ this.secondDate.split("/")[0]);
-                    let tempDate = new Date(""+item.addedDate.split("/")[1] +","+ item.addedDate.split("/")[0] +","+ item.addedDate.split("/")[2]);
-                    if(tempDate >= givenFirstDate && tempDate <= givenSecondDate){
+        if(this.firstDate != '' || this.secondDate != ''){
+          if(this.firstDate != '' && this.secondDate != ''){
+              if(this.secondDate < this.firstDate){
+                  alert("Invalid input!");
+                  this.firstDate = '';
+                  this.secondDate = '';
+              }
+              else{
+                  this.reviewsForApproval.forEach(item => {
+                      let givenFirstDate = new Date(""+this.firstDate.split("/")[1] +","+ this.firstDate.split("/")[2] +","+ this.firstDate.split("/")[0]);
+                      let givenSecondDate = new Date(""+this.secondDate.split("/")[1] +","+ this.secondDate.split("/")[2] +","+ this.secondDate.split("/")[0]);
+                      let tempDate = new Date(""+item.addedDate.split("/")[1] +","+ item.addedDate.split("/")[0] +","+ item.addedDate.split("/")[2]);
+                      if(tempDate >= givenFirstDate && tempDate <= givenSecondDate){
+                          filterDataUsingDate.push(item);
+                      }
+                  });
+                  this.reviewsToApprove = filterDataUsingDate;
+              }
+          }
+          else{
+              this.reviewsForApproval.forEach(item => {
+                  let dateFormate = new Date(""+dateForFilter.split("/")[1] +","+ dateForFilter.split("/")[2] +","+ dateForFilter.split("/")[0]);
+                  let tempDate = new Date(""+item.addedDate.split("/")[1] +","+ item.addedDate.split("/")[0] +","+ item.addedDate.split("/")[2]);
+                  if(this.firstDate != '' && this.secondDate == ''){
+                    if(tempDate >= dateFormate){
                         filterDataUsingDate.push(item);
                     }
-                });
-                console.log(filterDataUsingDate);
-                this.reviewsToApprove = filterDataUsingDate;
-            }
-        }
-        else{
-            this.reviewsForApproval.forEach(item => {
-                let dateFormate = new Date(""+dateForFilter.split("/")[1] +","+ dateForFilter.split("/")[2] +","+ dateForFilter.split("/")[0]);
-                let tempDate = new Date(""+item.addedDate.split("/")[1] +","+ item.addedDate.split("/")[0] +","+ item.addedDate.split("/")[2]);
-                if(para == "firstDate"){
-                  if(tempDate >= dateFormate){
-                      filterDataUsingDate.push(item);
                   }
-                }
-                else{
-                  if(tempDate <= dateFormate){
-                      filterDataUsingDate.push(item);
+                  else if(this.firstDate == '' && this.secondDate != ''){
+                    if(tempDate <= dateFormate){
+                        filterDataUsingDate.push(item);
+                    }
                   }
-                }
-            });
-            console.log(filterDataUsingDate);
-            this.reviewsToApprove = filterDataUsingDate;
+              });
+              this.reviewsToApprove = filterDataUsingDate;
+          }
         }
+      },
+      clearDateFilter(){
+        this.firstDate = '';
+        this.secondDate = '';
+        this.filterDateFun('');
+      },
+      clearAllFilters(){
+        this.searchText = '';
+        this.sortReview = '';
+        this.filterPerson = '';
+        this.goodOrBad = '';
+        this.firstDate = '';
+        this.secondDate = '';
+        this.filterDateFun('');
+        this.filterPersonFun();
+        this.sortReviewsFun();
+        this.filterReview();
+        this.filterGoodOrBad('');
       },
   },
   computed: {
@@ -354,6 +378,14 @@ export default {
 }
 .clearDateBtn{
   background-color: #003865;
+  color: #ffffff;
+  text-decoration: none;
+}
+.clearAllFilterDiv{
+  text-align: center;
+  margin-top: 30px;
+}
+.clearDateBtn:hover{
   color: #ffffff;
 }
 .cardContainer{
