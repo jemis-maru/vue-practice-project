@@ -36,7 +36,7 @@
                     </select>
                 </div>
                 <div class="col-md-4 col-12">
-                    <p style="color: #003865;">Review filter:</p>
+                    <p class="font-blue">Review filter:</p>
                     <select class="form-control" v-model="goodOrBad" @change="filterGoodOrBad">
                         <option value="">All review</option>
                         <option value="good">Good review</option>
@@ -60,6 +60,34 @@
           <div class="clearAllFilterDiv">
               <p>Clear all filters:&nbsp;&nbsp;<a class="btn clearDateBtn" @click="clearAllFilters">Clear</a></p>
           </div>
+          <div class="row multipleSelectDiv">
+              <div class="col-6 form-row font-blue">
+                  <label class="col-sm-7 col-form-label">Approve selected reviews: </label>
+                  <a @click="approveMultipleFun()" class="form-control col-sm-5 btn btn-success">Approve</a>
+              </div>
+              <div class="col-1"></div>
+              <div class="col-5 form-row font-blue">
+                  <label class="col-sm-7 col-form-label">Reject selected reviews: </label>
+                  <a @click="rejectMultipleFun()" class="form-control col-sm-5 btn btn-danger">Reject</a>
+              </div>
+          </div>
+          <div class="row multipleSelectDiv">
+              <div class="col-6 form-row font-blue">
+                  <label class="col-sm-7 col-form-label">
+                    Approve 3 & above 3:
+                    <b-icon class="starIcon" icon="star-fill"></b-icon>
+                  </label>
+                  <a @click="approveAllGood()" class="form-control col-sm-5 btn btn-success">Approve</a>
+              </div>
+              <div class="col-1"></div>
+              <div class="col-5 form-row font-blue">
+                  <label class="col-sm-7 col-form-label">
+                    Reject below 3:
+                    <b-icon class="starIcon" icon="star-fill"></b-icon>
+                  </label>
+                  <a @click="rejectAllBad()" class="form-control col-sm-5 btn btn-danger">Reject</a>
+              </div>
+          </div>
       </div>
       <div v-if="dataAfterFilter" class="font-blue noReviewForFilter">
           <h4>Sorry! No review found for this filter</h4>
@@ -71,6 +99,9 @@
       >
         <div class="row">
           <div class="col-12 mt-3">
+            <div>
+                <input v-model="expe.isChecked" type="checkbox" @change="selectMultipleReview(expe)">
+            </div>
             <div class="shadow card">
               <div class="card-horizontal">
                 <div class="img-square-wrapper">
@@ -138,6 +169,7 @@ export default {
       firstDate: '',
       secondDate: '',
       reviewsForApproval: [],
+      multipleSelectArr: [],
     };
   },
   methods: {
@@ -324,6 +356,81 @@ export default {
         this.filterReview();
         this.filterGoodOrBad('');
       },
+      selectMultipleReview(selectedReview){
+        // console.log(selectedReview);
+        // console.log(selectedReview.isChecked);
+        if(selectedReview.isChecked){
+          this.multipleSelectArr.push(selectedReview);
+          // console.log(this.multipleSelectArr);
+        }
+        else{
+          let matchIndex = this.multipleSelectArr.findIndex(item => {
+            return item._id === selectedReview._id;
+          });
+          this.multipleSelectArr.splice(matchIndex, 1);
+          // console.log(this.multipleSelectArr);
+        }
+      },
+      approveMultipleFun(){
+        if(this.multipleSelectArr.length == 0){
+          alert("Please select atleast one review");
+          return;
+        }
+        // console.log(this.multipleSelectArr);
+        if(confirm('Want to approve reviews?'))
+        {
+          this.$store.dispatch("adminHomeModule/approveMultiple", this.multipleSelectArr);
+        }
+      },
+      rejectMultipleFun(){
+        if(this.multipleSelectArr.length == 0){
+          alert("Please select atleast one review");
+          return;
+        }
+        // console.log(this.multipleSelectArr);
+        if(confirm('Want to reject reviews?'))
+        {
+          this.$store.dispatch("adminHomeModule/rejectMultiple", this.multipleSelectArr);
+        }
+      },
+      approveAllGood(){
+        let allReviews = this.getReviewsToApprove;
+        // console.log(allReviews);
+        let goodReviewArr = [];
+        allReviews.forEach(item => {
+          if(item.rating >= 3) {
+            goodReviewArr.push(item);
+          }
+        });
+        if(goodReviewArr.length > 0){
+          if(confirm('Want to approve all good reviews?'))
+          {
+            this.$store.dispatch("adminHomeModule/approveGoodReviews", goodReviewArr);
+          }
+        }
+        else{
+          alert("There is no good review at this time");
+        }
+      },
+      rejectAllBad(){
+        let allReviews = this.getReviewsToApprove;
+        // console.log(allReviews);
+        let badReviewArr = [];
+        allReviews.forEach(item => {
+          if(item.rating < 3) {
+            badReviewArr.push(item);
+          }
+        });
+        if(badReviewArr.length > 0){
+          if(confirm('Want to reject all bad reviews?'))
+          {
+            this.$store.dispatch("adminHomeModule/rejectbadReviews", badReviewArr);
+          }
+        }
+        else{
+          alert("There is no bad review at this time");
+        }
+      },
   },
   computed: {
     noReviewFound() {
@@ -356,71 +463,14 @@ export default {
 };
 </script>
 
+<style scoped src="@/css/filtersAndCards.css">
+</style>
+
 <style scoped>
-.notFoundDiv, .noReviewForFilter, .dateFilterDivText {
-  text-align: center;
-}
-.noReviewForFilter{
-  margin-top: 30px;
-}
-.filterContainer{
-  margin-bottom: 20px;
-}
-.searchDiv{
-  margin-bottom: 30px;
-}
-.searchLabel{
-  padding-right: 5px;
-  text-align: right;
-}
-.selectionFilters{
-  margin-bottom: 20px;
-}
-.clearDateBtn{
-  background-color: #003865;
-  color: #ffffff;
-  text-decoration: none;
-}
-.clearAllFilterDiv{
-  text-align: center;
-  margin-top: 30px;
-}
-.clearDateBtn:hover{
-  color: #ffffff;
-}
-.cardContainer{
-  max-width: 1000px
-}
-.card-horizontal {
-  display: flex;
-  flex: 1 1 auto;
-}
-.cardImg {
-  max-width: 400px;
-  height: 200px;
-}
-.cardBtn {
-  display: grid;
-}
-.footerCard{
-  background-color: #ffffff;
-}
-.textRight{
-  text-align: right;
-}
 .approveBtn, .rejectBtn{
   display: inline-block;
 }
 .rejectBtn{
   float: right;
-}
-
-@media only screen and (max-width: 700px) {
-  .card-horizontal {
-    display: inline-block;
-  }
-  .cardImg {
-    max-width: 600px !important;
-  }
 }
 </style>

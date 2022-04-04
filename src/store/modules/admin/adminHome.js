@@ -91,6 +91,82 @@ export default {
                   });
             }
         },
+        async approveMultiple(_, payload){
+          console.log(payload);
+          fetch("http://localhost:5000/approveMultipleApprExps", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              arrApprMulSel: payload,
+            }),
+          })
+          .then( res => {
+            console.log(res);
+            if(!res.ok){
+              if(!alert("Unable to approve data!"))
+              {
+                window.location.reload();
+              }
+            }
+            else{
+              if(!alert("Approve successfully!"))
+              {
+                window.location.reload();
+              }
+            }
+          })
+          .catch( err => {
+            console.log(err);
+            if(!alert("Unable to approve data!"))
+            {
+                window.location.reload();
+            }
+          });
+        },
+        async rejectMultiple(_, payload){
+          console.log(payload);
+          fetch("http://localhost:5000/rejectMultipleApprExps", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              arrApprMulSel: payload,
+            }),
+          })
+          .then( res => {
+            console.log(res);
+            if(!res.ok){
+              if(!alert("Unable to reject data!"))
+              {
+                window.location.reload();
+              }
+            }
+            else{
+              if(!alert("Reject successfully!"))
+              {
+                window.location.reload();
+              }
+            }
+          })
+          .catch( err => {
+            console.log(err);
+            if(!alert("Unable to reject data!"))
+            {
+                window.location.reload();
+            }
+          });
+        },
+        approveGoodReviews(context, payload){
+          // console.log(payload);
+          context.dispatch("approveMultiple", payload);
+        },
+        rejectbadReviews(context, payload){
+          // console.log(payload);
+          context.dispatch("rejectMultiple", payload);
+        },
     },
     getters: {
         reviewsToApprove(state){

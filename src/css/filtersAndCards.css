@@ -1,0 +1,60 @@
+.notFoundDiv, .noReviewForFilter, .dateFilterDivText {
+    text-align: center;
+}
+.noReviewForFilter, .multipleSelectDiv{
+    margin-top: 30px;
+}
+.filterContainer{
+    margin-bottom: 20px;
+}
+.searchDiv{
+    margin-bottom: 30px;
+}
+.searchLabel{
+    padding-right: 5px;
+    text-align: right;
+}
+.selectionFilters{
+    margin-bottom: 20px;
+}
+.clearDateBtn{
+    background-color: #003865;
+    color: #ffffff;
+    text-decoration: none;
+}
+.clearAllFilterDiv{
+    text-align: center;
+    margin-top: 30px;
+}
+.clearDateBtn:hover{
+    color: #ffffff;
+}
+.cardContainer{
+    max-width: 1000px;
+}
+.card-horizontal {
+    display: flex;
+    flex: 1 1 auto;
+}
+.cardImg {
+    max-width: 400px;
+    height: 200px;
+}
+.cardBtn {
+    display: grid;
+}
+.footerCard{
+    background-color: #ffffff;
+}
+.textRight{
+    text-align: right;
+}
+
+@media only screen and (max-width: 700px) {
+    .card-horizontal {
+        display: inline-block;
+    }
+    .cardImg {
+        max-width: 600px !important;
+    }
+}
