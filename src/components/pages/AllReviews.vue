@@ -8,6 +8,55 @@
         <h4>Sorry! No review found</h4>
     </div>
     <div v-else>
+      <div v-if="!noPinReview" class="pinReviewDiv">
+        <div class="container-fluid cardContainer">
+          <div class="row">
+            <div class="col-12 mt-3">
+              <div>
+                  <b-icon class="pinIcon" icon="bookmark-star-fill"></b-icon>
+              </div>
+              <div class="shadow card">
+                <div class="card-horizontal">
+                  <div class="img-square-wrapper">
+                    <img
+                      class="cardImg card-img-top img-fluid mx-auto d-block"
+                      :src="pinReview[0].filePath"
+                      alt="Card image"
+                    />
+                  </div>
+                  <div class="card-body">
+                    <h4 class="card-title">{{ pinReview[0].title }}</h4>
+                    <p class="card-text">{{ pinReview[0].highlights }}</p>
+                    <p class="card-text">
+                      Rating: {{ pinReview[0].rating }}/5
+                      <b-icon class="starIcon" icon="star-fill"></b-icon>
+                    </p>
+                  </div>
+                </div>
+                <div class="footerCard card-footer">
+                  <a
+                    class="btn btn-primary cardBtn"
+                    data-toggle="collapse"
+                    :data-target="pinReview[0].targetId"
+                    >Read full experience</a
+                  >
+                  <div :id="pinReview[0].expId" class="collapse">
+                    <br />
+                    <div v-html="pinReview[0].content"></div>
+                    <p class="textRight">Written by - {{ pinReview[0].name }}</p>
+                    <p class="textRight">On - {{ pinReview[0].addedDate }}</p>
+                    <br />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br />
+        </div>
+        <div>
+            <hr class="hrLine">
+        </div>
+      </div>
       <div class="container filterContainer">
           <div class="row searchDiv">
               <div class="col-3"></div>
@@ -122,6 +171,8 @@ export default {
   data() {
     return {
       reviewsForApproval: [],
+      pinReview: [],
+      noPinReview: true,
     };
   },
   computed: {
@@ -135,6 +186,9 @@ export default {
   async created() {
     await this.$store.dispatch("allReviewsModule/fetchApprovedReviews");
     this.reviewsForApproval = this.getReviewsToApprove;
+    await this.$store.dispatch("allReviewsModule/fetchPinReview");
+    this.pinReview = this.$store.getters["allReviewsModule/pinReview"];
+    this.noPinReview = this.$store.getters["allReviewsModule/noPinReview"];
   },
 };
 </script>
@@ -143,4 +197,14 @@ export default {
 </style>
 
 <style scoped>
+.pinReviewDiv{
+  margin-bottom: 30px;
+}
+.pinIcon{
+  color: #ff0000;
+}
+.hrLine{
+  background-color: #003865;
+  max-width: 500px;
+}
 </style>

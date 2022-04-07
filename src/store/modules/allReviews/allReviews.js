@@ -4,6 +4,8 @@ export default {
         return{
             noApprovedReviews: true,
             approvedReviews: [],
+            pinReview: [],
+            noPinReview: true,
         };
     },
     mutations: {
@@ -15,6 +17,14 @@ export default {
             state.approvedReviews = payload;
             console.log(state.approvedReviews);
         },
+        setPinReview(state, payload){
+            state.noPinReview = false;
+            if(payload.length == 0){
+                state.noPinReview = true;
+            }
+            state.pinReview = payload;
+            console.log(state.pinReview);
+        },
     },
     actions: {
         async fetchApprovedReviews(context){
@@ -22,6 +32,12 @@ export default {
             const responseData = await response.json();
             // console.log(responseData);
             context.commit('setApprovedReviews', responseData);
+        },
+        async fetchPinReview(context){
+            const response = await fetch('http://localhost:5000/pinExps');
+            const responseData = await response.json();
+            // console.log(responseData);
+            context.commit('setPinReview', responseData);
         },
     },
     getters: {
@@ -31,6 +47,13 @@ export default {
         },
         noApprovedReviews(state){
             return state.noApprovedReviews;
+        },
+        pinReview(state){
+            console.log(state.pinReview);
+            return state.pinReview;
+        },
+        noPinReview(state){
+            return state.noPinReview;
         },
     },
 };

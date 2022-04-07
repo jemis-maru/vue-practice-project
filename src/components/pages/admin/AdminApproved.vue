@@ -2,7 +2,7 @@
   <div>
     <div class="shadow p-3 mb-5 bg-white container text-center">
         <h1 class="font-blue">Welcome to admin page of Experience sharing portal</h1>
-        <p class="font-blue">You can approve experience here!</p>
+        <p class="font-blue">You can read our reviews which we got from our students, college staff and visitors.</p>
     </div>
     <div class="container adminDropdown">
       <admin-dropdown></admin-dropdown>
@@ -12,6 +12,10 @@
     </div>
     <div v-else>
       <div class="container filterContainer">
+          <div class="unpinDiv">
+              <h4 class="unpinTxt">Want to unpin experience?</h4>
+              <a @click="unpinReview" class="btn btn btn-info unpinBtn">Unpin</a>
+          </div>
           <div class="row searchDiv">
               <div class="col-3"></div>
               <div class="col-3"></div>
@@ -63,34 +67,6 @@
           <div class="clearAllFilterDiv">
               <p>Clear all filters:&nbsp;&nbsp;<a class="btn clearDateBtn" @click="clearAllFilters">Clear</a></p>
           </div>
-          <div class="row multipleSelectDiv">
-              <div class="col-6 form-row font-blue">
-                  <label class="col-sm-7 col-form-label">Approve selected reviews: </label>
-                  <a @click="approveMultipleFun()" class="form-control col-sm-5 btn btn-success">Approve</a>
-              </div>
-              <div class="col-1"></div>
-              <div class="col-5 form-row font-blue">
-                  <label class="col-sm-7 col-form-label">Reject selected reviews: </label>
-                  <a @click="rejectMultipleFun()" class="form-control col-sm-5 btn btn-danger">Reject</a>
-              </div>
-          </div>
-          <div class="row multipleSelectDiv">
-              <div class="col-6 form-row font-blue">
-                  <label class="col-sm-7 col-form-label">
-                    Approve 3 & above 3:
-                    <b-icon class="starIcon" icon="star-fill"></b-icon>
-                  </label>
-                  <a @click="approveAllGood()" class="form-control col-sm-5 btn btn-success">Approve</a>
-              </div>
-              <div class="col-1"></div>
-              <div class="col-5 form-row font-blue">
-                  <label class="col-sm-7 col-form-label">
-                    Reject below 3:
-                    <b-icon class="starIcon" icon="star-fill"></b-icon>
-                  </label>
-                  <a @click="rejectAllBad()" class="form-control col-sm-5 btn btn-danger">Reject</a>
-              </div>
-          </div>
       </div>
       <div v-if="dataAfterFilter" class="font-blue noReviewForFilter">
           <h4>Sorry! No review found for this filter</h4>
@@ -102,9 +78,6 @@
       >
         <div class="row">
           <div class="col-12 mt-3">
-            <div>
-                <input v-model="expe.isChecked" type="checkbox" @change="selectMultipleReview(expe)">
-            </div>
             <div class="shadow card">
               <div class="card-horizontal">
                 <div class="img-square-wrapper">
@@ -135,19 +108,22 @@
                   <div v-html="expe.content"></div>
                   <p class="textRight">Written by - {{ expe.name }}</p>
                   <p class="textRight">On - {{ expe.addedDate }}</p>
-                  <p class="textRight">
-                    Contact details - {{ expe.email }}
-                  </p>
+                  <p class="textRight">Contact details - {{expe.email}}</p>
                   <br />
                   <a
-                    class="btn btn btn-info approveBtn"
-                    @click="approveReview(expe)"
-                    >Approve</a
+                    class="btn btn btn-info pinBtn"
+                    @click="pinReview(expe)"
+                    >Pin</a
                   >
                   <a
-                    class="btn btn btn-danger rejectBtn"
-                    @click="rejectReview(expe._id)"
-                    >Reject</a
+                    class="btn btn btn-info addSliderBtn"
+                    @click="addToSlider(expe)"
+                    >Add to slider</a
+                  >
+                  <a
+                    class="btn btn btn-danger deleteBtn"
+                    @click="deleteApprovedReview(expe._id)"
+                    >Delete</a
                   >
                 </div>
               </div>
@@ -165,112 +141,49 @@ import mixin from '../../../mixins/mixin.js';
 import AdminDropdown from '../../AdminDropdown.vue';
 
 export default {
-  name: "adminHome",
+  name: "allReviews",
   mixins: [mixin],
   components: {
     'admin-dropdown': AdminDropdown,
   },
-  data(){
-    return{
+  data() {
+    return {
       reviewsForApproval: [],
-      multipleSelectArr: [],
     };
   },
   methods: {
-      approveReview(review){
-        console.log(review);
-        this.$store.dispatch("adminHomeModule/approveReview", review);
-      },
-      rejectReview(reviewId){
-        console.log(reviewId);
-        this.$store.dispatch("adminHomeModule/rejectReview", reviewId);
-      },
-      selectMultipleReview(selectedReview){
-        // console.log(selectedReview);
-        // console.log(selectedReview.isChecked);
-        if(selectedReview.isChecked){
-          this.multipleSelectArr.push(selectedReview);
-          // console.log(this.multipleSelectArr);
+    pinReview(review){
+        // console.log(review);
+        if(confirm('Want to pin review?')){
+            this.$store.dispatch("adminApprovedModule/pinReview", review);
         }
-        else{
-          let matchIndex = this.multipleSelectArr.findIndex(item => {
-            return item._id === selectedReview._id;
-          });
-          this.multipleSelectArr.splice(matchIndex, 1);
-          // console.log(this.multipleSelectArr);
+    },
+    unpinReview(){
+        if(confirm('Want to unpin review?')){
+            this.$store.dispatch("adminApprovedModule/unpinReview");
         }
-      },
-      approveMultipleFun(){
-        if(this.multipleSelectArr.length == 0){
-          alert("Please select atleast one review");
-          return;
+    },
+    addToSlider(review){
+        if(confirm('Want to add review to slider?')){
+            this.$store.dispatch("adminApprovedModule/addToSlider", review);
         }
-        // console.log(this.multipleSelectArr);
-        if(confirm('Want to approve reviews?'))
-        {
-          this.$store.dispatch("adminHomeModule/approveMultiple", this.multipleSelectArr);
+    },
+    deleteApprovedReview(reviewId){
+        if(confirm('Want to delete review?')){
+            this.$store.dispatch("adminApprovedModule/deleteApprovedReview", reviewId);
         }
-      },
-      rejectMultipleFun(){
-        if(this.multipleSelectArr.length == 0){
-          alert("Please select atleast one review");
-          return;
-        }
-        // console.log(this.multipleSelectArr);
-        if(confirm('Want to reject reviews?'))
-        {
-          this.$store.dispatch("adminHomeModule/rejectMultiple", this.multipleSelectArr);
-        }
-      },
-      approveAllGood(){
-        let allReviews = this.getReviewsToApprove;
-        // console.log(allReviews);
-        let goodReviewArr = [];
-        allReviews.forEach(item => {
-          if(item.rating >= 3) {
-            goodReviewArr.push(item);
-          }
-        });
-        if(goodReviewArr.length > 0){
-          if(confirm('Want to approve all good reviews?'))
-          {
-            this.$store.dispatch("adminHomeModule/approveGoodReviews", goodReviewArr);
-          }
-        }
-        else{
-          alert("There is no good review at this time");
-        }
-      },
-      rejectAllBad(){
-        let allReviews = this.getReviewsToApprove;
-        // console.log(allReviews);
-        let badReviewArr = [];
-        allReviews.forEach(item => {
-          if(item.rating < 3) {
-            badReviewArr.push(item);
-          }
-        });
-        if(badReviewArr.length > 0){
-          if(confirm('Want to reject all bad reviews?'))
-          {
-            this.$store.dispatch("adminHomeModule/rejectbadReviews", badReviewArr);
-          }
-        }
-        else{
-          alert("There is no bad review at this time");
-        }
-      },
+    }
   },
   computed: {
     noReviewFound() {
-      return this.$store.getters["adminHomeModule/noReviewsToApprove"];
+      return this.$store.getters["allReviewsModule/noApprovedReviews"];
     },
-    getReviewsToApprove(){
-      return this.$store.getters["adminHomeModule/reviewsToApprove"];
+    getReviewsToApprove() {
+      return this.$store.getters["allReviewsModule/approvedReviews"];
     },
   },
-  async created(){
-    await this.$store.dispatch('adminHomeModule/fetchReviewToApprove');
+  async created() {
+    await this.$store.dispatch("allReviewsModule/fetchApprovedReviews");
     this.reviewsForApproval = this.getReviewsToApprove;
   },
 };
@@ -280,11 +193,24 @@ export default {
 </style>
 
 <style scoped>
-.approveBtn, .rejectBtn{
+.unpinDiv{
+    text-align: center;
+    margin-bottom: 30px;
+}
+.unpinTxt, .unpinBtn{
+    display: inline-block;
+}
+.unpinBtn{
+    margin-left: 2px;
+}
+.pinBtn, .addSliderBtn, .deleteBtn{
   display: inline-block;
 }
-.rejectBtn{
-  float: right;
+.addSliderBtn{
+    margin-left: 2px;
+}
+.deleteBtn{
+    float: right;
 }
 .adminDropdown{
   margin-bottom: 30px;

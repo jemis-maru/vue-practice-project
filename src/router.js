@@ -5,6 +5,7 @@ import AddReview from './components/pages/AddReview.vue';
 import AllReviews from './components/pages/AllReviews.vue';
 import AdminLogin from './components/pages/admin/AdminLogin.vue';
 import AdminHome from './components/pages/admin/AdminHome.vue';
+import AdminApproved from './components/pages/admin/AdminApproved.vue';
 import store from './store/store.js';
 
 const router = new VueRouter({
@@ -40,6 +41,13 @@ const router = new VueRouter({
         {
             path: '/admin',
             component: AdminHome,
+            meta: {
+                requiredAuth: true,
+            },
+        },
+        {
+            path: '/adminApproved',
+            component: AdminApproved,
             meta: {
                 requiredAuth: true,
             },
