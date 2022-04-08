@@ -67,6 +67,23 @@
           <div class="clearAllFilterDiv">
               <p>Clear all filters:&nbsp;&nbsp;<a class="btn clearDateBtn" @click="clearAllFilters">Clear</a></p>
           </div>
+          <div class="row deleteSelectedDiv">
+              <div class="col-3"></div>
+              <div class="col-6 form-row font-blue">
+                  <label class="col-sm-8 col-form-label">Delete selected reviews: </label>
+                  <a class="form-control col-sm-4 btn btn-danger" @click="deleteMultipleFun">Delete</a>
+              </div>
+              <div class="col-3"></div>
+          </div>
+          <div class="row exportPdfDiv">
+              <div class="col-2"></div>
+              <div class="col-8 form-row font-blue">
+                  <label class="col-sm-3 col-form-label">Export as PDF: </label>
+                  <a @click="allExportPdf" class="exportBtn col-sm-4 btn">Export all</a>
+                  <a @click="selectedExportPdf" class="exportBtn col-sm-5 btn">Export selected</a>
+              </div>
+              <div class="col-2"></div>
+          </div>
       </div>
       <div v-if="dataAfterFilter" class="font-blue noReviewForFilter">
           <h4>Sorry! No review found for this filter</h4>
@@ -78,6 +95,9 @@
       >
         <div class="row">
           <div class="col-12 mt-3">
+            <div>
+                <input v-model="expe.isChecked" type="checkbox" @change="selectMultipleReview(expe)">
+            </div>
             <div class="shadow card">
               <div class="card-horizontal">
                 <div class="img-square-wrapper">
@@ -149,6 +169,7 @@ export default {
   data() {
     return {
       reviewsForApproval: [],
+      multipleSelectArr: [],
     };
   },
   methods: {
@@ -172,7 +193,52 @@ export default {
         if(confirm('Want to delete review?')){
             this.$store.dispatch("adminApprovedModule/deleteApprovedReview", reviewId);
         }
-    }
+    },
+    selectMultipleReview(selectedReview){
+      // console.log(selectedReview);
+      // console.log(selectedReview.isChecked);
+      if(selectedReview.isChecked){
+        this.multipleSelectArr.push(selectedReview);
+        // console.log(this.multipleSelectArr);
+      }
+      else{
+        let matchIndex = this.multipleSelectArr.findIndex(item => {
+          return item._id === selectedReview._id;
+        });
+        this.multipleSelectArr.splice(matchIndex, 1);
+        // console.log(this.multipleSelectArr);
+      }
+    },
+    deleteMultipleFun(){
+      if(this.multipleSelectArr.length == 0){
+        alert("Please select atleast one review");
+        return;
+      }
+      // console.log(this.multipleSelectArr);
+      if(confirm('Want to delete reviews?'))
+      {
+        // console.log(this.multipleSelectArr);
+        this.$store.dispatch("adminApprovedModule/deleteMultiple", this.multipleSelectArr);
+      }
+    },
+    selectedExportPdf(){
+      if(this.multipleSelectArr.length == 0){
+        alert("Please select atleast one review");
+        return;
+      }
+      // console.log(this.multipleSelectArr);
+      if(confirm('Want to export reviews?'))
+      {
+        // console.log(this.multipleSelectArr);
+        this.$store.dispatch("adminApprovedModule/selectedExportPdf", this.multipleSelectArr);
+      }
+    },
+    allExportPdf(){
+      if(confirm('Want to export all reviews?'))
+      {
+        this.$store.dispatch("adminApprovedModule/selectedExportPdf", this.getReviewsToApprove);
+      }
+    },
   },
   computed: {
     noReviewFound() {
@@ -209,10 +275,23 @@ export default {
 .addSliderBtn{
     margin-left: 2px;
 }
-.deleteBtn{
+.deleteBtn, .deleteSelectedBtn{
     float: right;
 }
 .adminDropdown{
   margin-bottom: 30px;
+}
+.deleteSelectedDiv, .exportPdfDiv{
+  margin-top: 30px;
+}
+.exportBtn{
+  margin: auto;
+  border: 2px solid #f9f9f9;
+  background-color: #003865;
+  color: #ffffff;
+  text-decoration: none;
+}
+.exportBtn:hover{
+  color: #ffffff;
 }
 </style>

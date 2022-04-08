@@ -9,7 +9,7 @@
         >
             <b-dropdown-item :to="{ path: '/admin' }">Approve experiences</b-dropdown-item>
             <b-dropdown-item :to="{ path: '/adminApproved' }">View approved experiences</b-dropdown-item>
-            <b-dropdown-item :to="{ path: '/admin' }">Manage slider</b-dropdown-item>
+            <b-dropdown-item :to="{ path: '/manageSlider' }">Manage slider</b-dropdown-item>
         </b-dropdown>
     </div>
 </template>

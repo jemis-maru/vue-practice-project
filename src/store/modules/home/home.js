@@ -53,6 +53,9 @@ export default {
         emptySlider(state){
             return state.isSliderEmpty;
         },
+        sliderData(state){
+            return state.sliderExps;
+        },
         firstSliderData(state){
             return state.firstSlider;
         },

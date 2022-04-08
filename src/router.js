@@ -6,6 +6,7 @@ import AllReviews from './components/pages/AllReviews.vue';
 import AdminLogin from './components/pages/admin/AdminLogin.vue';
 import AdminHome from './components/pages/admin/AdminHome.vue';
 import AdminApproved from './components/pages/admin/AdminApproved.vue';
+import AdminManageSlider from './components/pages/admin/AdminManageSlider.vue';
 import store from './store/store.js';
 
 const router = new VueRouter({
@@ -48,6 +49,13 @@ const router = new VueRouter({
         {
             path: '/adminApproved',
             component: AdminApproved,
+            meta: {
+                requiredAuth: true,
+            },
+        },
+        {
+            path: '/manageSlider',
+            component: AdminManageSlider,
             meta: {
                 requiredAuth: true,
             },
