@@ -36,7 +36,7 @@
                 <a class="nav-link">Add review <span class="sr-only">(current)</span></a>
               </li>
             </router-link>
-            <router-link to="/demo" class="routerLink">
+            <router-link to="/findReview" class="routerLink">
               <li class="nav-item active">
                 <a class="nav-link">Find review <span class="sr-only">(current)</span></a>
               </li>

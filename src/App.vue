@@ -36,6 +36,7 @@ export default {
   background-color: #f9f9f9;
   padding-top: 100px;
   padding-bottom: 50px;
+  min-height: 100vh;
 }
 .container{
   border-radius: 10px !important;

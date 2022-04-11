@@ -2,7 +2,9 @@ import VueRouter from 'vue-router';
 import Home from './components/pages/Home.vue';
 import Demo from './components/pages/Demo.vue';
 import AddReview from './components/pages/AddReview.vue';
+import UpdateReview from './components/pages/UpdateReview.vue';
 import AllReviews from './components/pages/AllReviews.vue';
+import FindReview from './components/pages/FindReview.vue';
 import AdminLogin from './components/pages/admin/AdminLogin.vue';
 import AdminHome from './components/pages/admin/AdminHome.vue';
 import AdminApproved from './components/pages/admin/AdminApproved.vue';
@@ -29,8 +31,16 @@ const router = new VueRouter({
             component: AddReview,
         },
         {
+            path: '/updateReview',
+            component: UpdateReview,
+        },
+        {
             path: '/allReviews',
             component: AllReviews,
+        },
+        {
+            path: '/findReview',
+            component: FindReview,
         },
         {
             path: '/login',
